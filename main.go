@@ -7,19 +7,29 @@ import (
 func main() {
 	counter := make(map[int32]int)
 	var buckets int32 = 10
-	for i := 0; i < 1000000; i++ {
-		o := JumpConsistentHash(uint64(i), buckets)
-		counter[o]++
+	add := func(buckets int32, iter int) {
+		for i := 0; i < iter; i++ {
+			o := JumpConsistentHash(uint64(i), buckets)
+			counter[o]++
+		}
 	}
+	add(buckets, 100)
+	print(counter)
 
-	sorted := make([]int, len(counter))
-	for k, v := range counter {
-		sorted[int(k)] = v
-	}
-	for k, v := range sorted {
-		fmt.Printf("%d => %d\n", k, v)
-	}
+	// Adding two new buckets
+	add(buckets+2, 100)
+	print(counter)
 
+	// Removing two buckets
+	add(buckets-2, 100)
+	print(counter)
+}
+
+func print(data map[int32]int) {
+	for i := 0; i < len(data); i++ {
+		fmt.Println(i, data[int32(i)])
+	}
+	fmt.Println()
 }
 
 func JumpConsistentHash(key uint64, numBuckets int32) int32 {
